@@ -1,0 +1,1 @@
+web: ./server cross-env NODE_ENV=development nest start --watch
