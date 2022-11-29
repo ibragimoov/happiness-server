@@ -36,6 +36,7 @@ import { Chapters } from "./entities/course-chapter.entity";
         AuthModule,
         RolesModule,
         CourseChapterModule,
+        //
     ],
     controllers: [CourseChapterController],
     providers: [CourseChapterService],
