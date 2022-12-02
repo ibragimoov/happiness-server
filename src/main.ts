@@ -9,6 +9,7 @@ async function bootstrap() {
     app.enableCors({
         credentials: true,
         origin: "https://happiness-ten.vercel.app/",
+        allowedHeaders: ["content-type"],
     });
 
     await app.listen(process.env.PORT);
