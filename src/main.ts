@@ -6,7 +6,10 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule);
 
     app.use(cookieParser());
-    app.enableCors();
+    app.enableCors({
+        credentials: true,
+        origin: "https://happiness-ten.vercel.app/",
+    });
 
     await app.listen(process.env.PORT);
 }
