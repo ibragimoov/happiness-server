@@ -8,7 +8,7 @@ async function bootstrap() {
     app.use(cookieParser());
     app.enableCors({
         credentials: true,
-        origin: "https://happiness-ten.vercel.app",
+        origin: ["https://happiness-ten.vercel.app", "http://localhost:3000"],
     });
 
     await app.listen(process.env.PORT);
