@@ -26,6 +26,7 @@ export class AuthController {
 
         return {
             message: "success",
+            token: jwt.token,
         };
     }
 
@@ -40,6 +41,7 @@ export class AuthController {
 
         return {
             message: "success",
+            token: jwt.token,
         };
     }
 
