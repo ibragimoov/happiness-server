@@ -46,9 +46,7 @@ export class AuthController {
     }
 
     @Get("/me")
-    async getMe(@Req() request: Request, jwt: string) {
-        // const cookie = request.cookies["jwt"];
-
+    async getMe(@Req() request: Request, @Body("token") jwt: string) {
         const data = await this.authService.me(jwt);
 
         return data;
