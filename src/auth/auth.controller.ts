@@ -22,7 +22,7 @@ export class AuthController {
     ) {
         const jwt = await this.authService.login(userDto);
 
-        response.cookie("jwt", jwt.token);
+        response.cookie("jwt", jwt.token, { httpOnly: true });
 
         return {
             message: "success",
@@ -36,7 +36,7 @@ export class AuthController {
     ) {
         const jwt = await this.authService.registration(userDto);
 
-        response.cookie("jwt", jwt.token);
+        response.cookie("jwt", jwt.token, { httpOnly: true });
 
         return {
             message: "success",
