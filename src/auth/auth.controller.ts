@@ -47,8 +47,8 @@ export class AuthController {
         };
     }
 
-    @Get("/me")
-    async getMe(@Req() request: Request, @Query("token") jwt: string) {
+    @Post("/me")
+    async getMe(@Req() request: Request, @Body("token") jwt: string) {
         const data = await this.authService.me(jwt);
 
         return data;

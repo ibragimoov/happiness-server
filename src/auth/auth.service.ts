@@ -41,12 +41,12 @@ export class AuthService {
         return this.generateToken(user);
     }
 
-    async me(cookie: any) {
+    async me(cookie: string) {
         try {
             if (!cookie) {
                 throw new UnauthorizedException();
             }
-            // console.log(cookie);
+
             const data = await this.jwtService.verifyAsync(cookie);
 
             if (!data) {
@@ -57,6 +57,7 @@ export class AuthService {
 
             return user;
         } catch (error) {
+            console.log(1);
             throw new UnauthorizedException();
         }
     }
