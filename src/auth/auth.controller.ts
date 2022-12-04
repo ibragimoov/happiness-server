@@ -46,10 +46,10 @@ export class AuthController {
     }
 
     @Get("/me")
-    async getMe(@Req() request: Request) {
-        const cookie = request.cookies["jwt"];
+    async getMe(@Req() request: Request, jwt: string) {
+        // const cookie = request.cookies["jwt"];
 
-        const data = await this.authService.me(cookie);
+        const data = await this.authService.me(jwt);
 
         return data;
     }
