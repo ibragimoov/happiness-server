@@ -2,7 +2,9 @@ import {
     Body,
     Controller,
     Get,
+    Param,
     Post,
+    Query,
     Req,
     Res,
     UnauthorizedException,
@@ -46,7 +48,7 @@ export class AuthController {
     }
 
     @Get("/me")
-    async getMe(@Req() request: Request, @Body("token") jwt: string) {
+    async getMe(@Req() request: Request, @Query("token") jwt: string) {
         const data = await this.authService.me(jwt);
 
         return data;
