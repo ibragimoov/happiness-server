@@ -57,7 +57,6 @@ export class AuthService {
 
             return user;
         } catch (error) {
-            console.log(1);
             throw new UnauthorizedException();
         }
     }

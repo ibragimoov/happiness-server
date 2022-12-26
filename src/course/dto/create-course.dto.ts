@@ -3,7 +3,7 @@ export class CreateCourseDto {
     readonly brief: string;
     readonly num_of_chapters: number;
     readonly fee: number;
-    readonly chapters: any;
+    readonly chapters: [];
     // readonly chaptersTitle: any;
     // readonly chaptersBrief: any;
     // readonly chaptersContent: any;

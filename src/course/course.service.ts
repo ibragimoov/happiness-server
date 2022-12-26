@@ -9,14 +9,17 @@ import { Course } from "src/entities/course.entity";
 import { Enrollment } from "src/entities/enrollment.entity";
 import { User } from "src/entities/user.entity";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
-import { Repository } from "typeorm";
+import { Any, Repository } from "typeorm";
 import { CreateCourseDto } from "./dto/create-course.dto";
+import { v4 as uuidv4 } from "uuid";
 
 @Injectable()
 export class CourseService {
     constructor(
         @InjectRepository(Course)
         private courseRepository: Repository<Course>,
+        @InjectRepository(Chapters)
+        private chapterRepository: Repository<Chapters>,
         @InjectRepository(User)
         private userRepository: Repository<User>,
         @InjectRepository(Enrollment)
@@ -30,7 +33,7 @@ export class CourseService {
     async getOne(id: number) {
         const course = await this.courseRepository.findOne({
             where: { id: id },
-            relations: { chapters: true },
+            relations: { chapters: true, user: true },
         });
 
         return course;
@@ -38,7 +41,7 @@ export class CourseService {
 
     async getOwnedCourses(user: CreateUserDto) {
         const enrollCourses = await this.enrollmentRepository.find({
-            relations: ["course", "user"],
+            relations: { course: true, user: true },
             where: { user: user },
         });
 
@@ -46,12 +49,12 @@ export class CourseService {
             throw new BadRequestException("Курсов не приобретено");
         }
 
-        let courses: Course[] = [];
-        enrollCourses.forEach((enroll) => {
-            courses.push(enroll.course);
-        });
+        // let courses: [] = [];
+        // enrollCourses.forEach((enroll) => {
+        //     courses.push(enroll);
+        // });
 
-        return courses;
+        return enrollCourses;
     }
 
     async create(dto: CreateCourseDto) {
@@ -68,14 +71,28 @@ export class CourseService {
                 ...dto,
             });
 
-            const enrollment = {
-                enrollment_date: new Date(),
-                is_paid_subscription: "0",
-                user: user,
-                course: course,
-            };
+            // dto.chapters.forEach((chap: any) => {
+            //     // chapter.content = chap.chap_content;
+            //     // chapter.course = course;
+            //     // chapter.title = chap.chap_title;
+            //     // chapter.chapterUuId = uuidv4();
+            //     this.chapterRepository.insert({
+            //         content: chap.chap_content,
+            //         course: course,
+            //         title: chap.chap_title,
+            //     });
+            // });
 
-            await this.enrollmentRepository.save({ ...enrollment });
+            // dto.chapters.forEach((chap: any) => {
+            //     course.chapters.push(chap);
+            // });
+
+            await this.chapterRepository.insert(dto.chapters);
+
+            course.user = user;
+            course.num_of_chapters = dto.chapters.length;
+
+            await this.courseRepository.save(course);
 
             return course;
         } catch (error) {

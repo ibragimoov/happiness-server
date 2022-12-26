@@ -14,14 +14,11 @@ export class Chapters {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
-    chapterUuId: string;
+    // @Column()
+    // chapterUuId: string;
 
     @Column()
     title: string;
-
-    @Column()
-    brief: string;
 
     @Column()
     content: string;
