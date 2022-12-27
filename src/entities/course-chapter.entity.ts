@@ -23,6 +23,9 @@ export class Chapters {
     @Column()
     brief: string;
 
+    @Column({ default: false })
+    isChecked: boolean;
+
     @Column({ type: "longtext" })
     content: string;
 
