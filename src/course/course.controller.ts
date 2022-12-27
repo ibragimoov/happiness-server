@@ -25,6 +25,11 @@ export class CourseController {
         return this.courseService.getOne(params.id);
     }
 
+    @Get("/chapter/:id")
+    getChapter(@Param() params) {
+        return this.courseService.getChapter(params.id);
+    }
+
     @Post()
     createCourse(@Body() dto: CreateCourseDto) {
         return this.courseService.create(dto);

@@ -21,11 +21,15 @@ export class Chapters {
     title: string;
 
     @Column()
+    brief: string;
+
+    @Column({ type: "longtext" })
     content: string;
 
     @ManyToOne(() => Course, (course) => course.chapters, {
         cascade: true,
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
     })
     course: Course;
 }

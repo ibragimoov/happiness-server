@@ -39,10 +39,28 @@ export class CourseService {
         return course;
     }
 
+    async getChapter(id: number) {
+        const chapter = await this.chapterRepository.findOne({
+            where: { id: id },
+        });
+
+        return chapter;
+    }
+
+    async getCreatedCourses(user: CreateUserDto) {
+        const courses = this.courseRepository.find({ where: { user } });
+
+        if (!courses) {
+            throw new BadRequestException("Курсов не создано");
+        }
+
+        return courses;
+    }
+
     async getOwnedCourses(user: CreateUserDto) {
         const enrollCourses = await this.enrollmentRepository.find({
-            relations: { course: true, user: true },
             where: { user: user },
+            relations: { course: true, user: true },
         });
 
         if (!enrollCourses) {
@@ -108,13 +126,28 @@ export class CourseService {
     }
 
     async update(id: number, dto: CreateCourseDto) {
-        await this.courseRepository.update(
-            { id: id },
-            {
-                title: dto.title,
-                brief: dto.brief,
-            }
-        );
+        console.log(dto);
+        const course = await this.courseRepository.findOne({ where: { id } });
+
+        if (!course) throw new UnauthorizedException();
+
+        const chapters = await this.chapterRepository.find({
+            where: { course: dto },
+        });
+
+        for (let index = 0; index < dto.chapters.length; index++) {
+            chapters[index] = dto.chapters[index];
+        }
+
+        this.chapterRepository.save(chapters);
+
+        course.chapters = dto.chapters;
+        course.title = dto.title;
+        course.brief = dto.brief;
+        course.fee = dto.fee;
+        course.num_of_chapters = dto.num_of_chapters;
+
+        await this.courseRepository.save(course);
 
         return {
             message: "update success",
@@ -122,41 +155,46 @@ export class CourseService {
     }
 
     async ownCourse(user: CreateUserDto, id: number) {
-        const candidate = await this.userRepository.findOne({
-            where: { email: user.email },
-        });
+        try {
+            const candidate = await this.userRepository.findOne({
+                where: { email: user.email },
+            });
 
-        if (!candidate) {
-            throw new UnauthorizedException();
+            if (!candidate) {
+                throw new UnauthorizedException();
+            }
+
+            const course = await this.getOne(id);
+
+            if (!course) {
+                throw new BadRequestException({ message: "Курс не найден" });
+            }
+
+            const enroll_candidate = await this.enrollmentRepository.findOne({
+                where: {
+                    user: candidate,
+                    course: course,
+                },
+            });
+
+            if (enroll_candidate) {
+                throw new BadRequestException("Курс уже приобретен");
+            }
+
+            const enroll = new Enrollment();
+
+            enroll.course = course;
+            enroll.user = candidate;
+            enroll.author_name = course.user.first_name + course.user.last_name;
+            enroll.enrollment_date = new Date();
+
+            await this.enrollmentRepository.save(enroll);
+
+            return {
+                message: "user bought course!",
+            };
+        } catch (error) {
+            console.log(error);
         }
-
-        const course = await this.getOne(id);
-
-        if (!course) {
-            throw new BadRequestException({ message: "Курс не найден" });
-        }
-
-        const enroll_candidate = await this.enrollmentRepository.findOne({
-            where: {
-                user: candidate,
-                course: course,
-            },
-        });
-
-        if (enroll_candidate) {
-            throw new BadRequestException("Курс уже приобретен");
-        }
-
-        const enroll = new Enrollment();
-
-        enroll.course = course;
-        enroll.user = candidate;
-        enroll.enrollment_date = new Date();
-
-        await this.enrollmentRepository.save(enroll);
-
-        return {
-            message: "user bought course!",
-        };
     }
 }

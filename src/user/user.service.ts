@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     HttpException,
     HttpStatus,
     Injectable,
@@ -29,6 +30,27 @@ export class UserService {
         });
 
         return user;
+    }
+
+    async getCreatedCourses(email: string) {
+        const candidate = await this.getUserByEmail(email);
+
+        if (!candidate) {
+            throw new HttpException(
+                "Пользователь с таким email уже зарегистрирован",
+                HttpStatus.BAD_REQUEST
+            );
+        }
+
+        const createdCourses = await this.courseService.getCreatedCourses(
+            candidate
+        );
+
+        if (!createdCourses) {
+            throw new BadRequestException("Курсов не создано");
+        }
+
+        return createdCourses;
     }
 
     async getOwnCourses(email: string) {

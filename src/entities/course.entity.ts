@@ -5,6 +5,7 @@ import {
     ManyToOne,
     OneToMany,
     JoinColumn,
+    JoinTable,
 } from "typeorm";
 import { Chapters } from "./course-chapter.entity";
 import { Enrollment } from "./enrollment.entity";
@@ -30,6 +31,7 @@ export class Course {
     @ManyToOne(() => User, (user) => user.ownCourses, {
         cascade: true,
         onDelete: "CASCADE",
+        onUpdate: "CASCADE",
     })
     @JoinColumn({ name: "user" })
     user: User;
