@@ -75,6 +75,24 @@ export class CourseService {
         return enrollCourses;
     }
 
+    async check(id: number) {
+        const candidate = await this.chapterRepository.findOne({
+            where: { id },
+        });
+
+        if (!candidate) {
+            throw new BadRequestException("Курс не найден");
+        }
+
+        candidate.isChecked = true;
+
+        this.chapterRepository.save(candidate);
+
+        return {
+            message: `глава ${candidate.id} пройдена!`,
+        };
+    }
+
     async create(dto: CreateCourseDto) {
         try {
             const user = await this.userRepository.findOne({

@@ -30,6 +30,11 @@ export class CourseController {
         return this.courseService.getChapter(params.id);
     }
 
+    @Post("/check/:id")
+    check(@Param() params) {
+        return this.courseService.check(params.id);
+    }
+
     @Post()
     createCourse(@Body() dto: CreateCourseDto) {
         return this.courseService.create(dto);
